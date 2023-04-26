@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="mb-3">{{object.title}}</h1>
+            <img src="{{ MEDIA_URL }}{{object.image}}" class="img-fluid">
+            <h3 class="mb-3">Category: {{object.category}}</h3>
+            <p class="mb-3">Summary: {{object.summary}}</p>
+            <p class="mb-3">Content: {{object.content}}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

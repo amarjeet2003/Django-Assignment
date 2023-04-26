@@ -1,0 +1,79 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Freshers
+    </h1>
+    <p class="mb-4">List of registered freshers and their payment status.</p>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 text-right">
+            <a href="{% url 'export_record' %}" class="btn btn-outline-secondary">Export</a>
+            <a href='{% url "add_fresher" %}' class="btn btn-primary">New Fresher</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone number</th>
+                            <th>Course</th>
+                            <th>Roll number</th>
+                            <th>Paid</th>
+                            <th>Checked in</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone number</th>
+                            <th>Course</th>
+                            <th>Roll number</th>
+                            <th>Paid</th>
+                            <th>Checked in</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for obj in object_list %}
+                        <tr>
+                            <td>
+                                <a href={% url 'update_fresher' pk=obj.id %}>{{obj.name}}
+                            </td>
+                            <td>{{obj.email}}</td>
+                            <td>{{obj.phone_number}}</td>
+                            <td>{{obj.course}}</td>
+                            <td>{{obj.roll_number}}</td>
+                            <td>
+                                {% if obj.payment.is_paid %}
+                                <i class='fa fa-check-circle text-success'></i>
+                                {% else %}
+                                <i class="fas fa-times-circle text-danger"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if obj.is_checked_in %}
+                                    <i class='fa fa-check-circle text-success'></i>
+                                {% else %}
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class='btn btn-danger delete-fresher' data-id='{{obj.id}}'>Delete</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
