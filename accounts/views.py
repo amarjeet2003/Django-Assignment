@@ -2,8 +2,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic.base import TemplateView
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import User, Blog
+import datetime
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from django.shortcuts import render
+
+
 
 
 class RegisterView(TemplateView):
@@ -14,8 +21,6 @@ class RegisterView(TemplateView):
             return render(request, self.template_name, context={"error": "Passwords don't match"})
         if User.objects.filter(email=request.POST.get("email")).exists():
             return render(request, self.template_name, context={"error": "Account already exists with this email"})
-        # if User.objects.filter(username=request.POST.get("username")).exists():
-        #     return render(request, self.template_name, context={"error": "Account already exists with this username"})
         new_user = User.objects.create(
                                     first_name=request.POST.get('first_name'),
                                     last_name=request.POST.get('last_name'),
@@ -88,3 +93,66 @@ class BlogUpdateView(UpdateView):
         blog_instance.save()
 
         return HttpResponseRedirect(reverse('blogs'))
+    
+
+class BookAppointmentView(ListView):
+    model = User
+    template_name = "book_appointment.html"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(user_type="doctor")
+        
+        return queryset
+    
+
+class AppointmentDetailsView(DetailView):
+    model = User
+    template_name = "appointment_details.html"
+
+ 
+    def post(self, request, pk):
+        # Retrieve the form data
+        speciality = request.POST.get('speciality')
+        date_of_appointment = request.POST.get('date_of_appointment')
+        starting_time = request.POST.get('starting_time')
+
+        # Calculate the end time of the appointment
+        start_datetime = datetime.datetime.strptime(date_of_appointment + starting_time, '%Y-%m-%d%H:%M')
+        end_datetime = start_datetime + datetime.timedelta(minutes=45)
+        end_time = end_datetime.strftime('%I:%M %p')
+
+        # Create the calendar event
+        service_account_file = 'credentials.json'
+        scopes = ['https://www.googleapis.com/auth/calendar']
+        credentials = service_account.Credentials.from_service_account_file(service_account_file, scopes=scopes)
+        service = build('calendar', 'v3', credentials=credentials)
+
+        event = {
+        'summary': 'Appointment for ' + speciality,
+        'description': 'Appointment Schedule',
+        'start': {
+            'dateTime': start_datetime.isoformat(),
+            'timeZone': 'Asia/Kolkata',
+        },
+        'end': {
+            'dateTime': end_datetime.isoformat(),
+            'timeZone': 'Asia/Kolkata',
+        },
+        }
+
+        try:
+            event = service.events().insert(calendarId='200390amarjeet@gmail.com', body=event).execute()
+            print('Event created: %s' % (event.get('htmlLink')))
+        except HttpError as error:
+            print('An error occurred: %s' % error)
+
+        user_instance = User.objects.get(pk=pk)
+        appointment_details = {
+            'doctor_name': user_instance.get_full_name(),  # Replace with the actual doctor's name
+            'appointment_date': date_of_appointment,
+            'start_time': starting_time,
+            'end_time': end_time,
+        }
+
+        return render(request, 'confirmation.html', {'appointment_details': appointment_details})

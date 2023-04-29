@@ -14,10 +14,15 @@
                     <li class="nav-item">
                         <a class="navbar-brand p-3" href="/">Home</a>
                     </li>
+                    {% if request.user.is_authenticated %}
                     <li class="nav-item">
                         <a class="navbar-brand p-3" href="{% url 'blogs' %}">Blogs</a>
                     </li>
-                    {% if request.user.is_authenticated %}
+                    {% if request.user.user_type == 'patient' %}
+                    <li>
+                        <a class="navbar-brand p-3" href="{% url 'book_appointment' %}">Book Appointment</a>
+                    </li>
+                    {% endif %}
                     <li>
                         <a class="navbar-brand p-3" href="{% url 'logout' %}">Logout</a>
                     </li>
