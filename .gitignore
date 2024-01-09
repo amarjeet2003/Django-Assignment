@@ -132,5 +132,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+notes.txt
 .vscode
 *.env
+uploads
+images/*
+media
+credentials.json
