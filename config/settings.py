@@ -77,10 +77,22 @@ WSGI_APPLICATION = 'config.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("DB_NAME"),
+        'USER': os.environ.get("DB_USER"),
+        'PASSWORD': os.environ.get("DB_PASSWORD"),
+        'HOST': os.environ.get("DB_HOST"),
+        'PORT': os.environ.get("DB_PORT"),
     }
 }
 
@@ -143,5 +155,5 @@ TOKEN_URI = os.environ.get("TOKEN_URI")
 CALENDAR_ID = os.environ.get("CALENDAR_ID")
 
 
-with open('/tmp/credentials.json', 'w') as file:
+with open('credentials.json', 'w') as file:
     file.write('{"private_key": "'+PRIVATE_KEY+'",\n "client_email": "'+CLIENT_EMAIL+'",\n "token_uri": "'+TOKEN_URI+'"\n }')
