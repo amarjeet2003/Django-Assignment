@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-zecuehps5+$e=u_-zk3_5-j3jjv0t782w03dxgkcj=0lyb=ol&'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -134,3 +134,13 @@ LOGOUT_REDIRECT_URL = "/accounts/login"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+PRIVATE_KEY = os.environ.get("PRIVATE_KEY")
+CLIENT_EMAIL = os.environ.get("CLIENT_EMAIL")
+TOKEN_URI = os.environ.get("TOKEN_URI")
+CALENDAR_ID = os.environ.get("CALENDAR_ID")
+
+
+with open('credentials.json', 'w') as file:
+    file.write('{"private_key": "'+PRIVATE_KEY+'",\n "client_email": "'+CLIENT_EMAIL+'",\n "token_uri": "'+TOKEN_URI+'"\n }')
