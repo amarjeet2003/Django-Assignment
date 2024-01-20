@@ -145,8 +145,8 @@ AUTH_USER_MODEL = "accounts.User"
 
 LOGOUT_REDIRECT_URL = "/accounts/login"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/tmp/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '/tmp/media')
 
 
 PRIVATE_KEY = os.environ.get("PRIVATE_KEY")
