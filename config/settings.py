@@ -155,5 +155,5 @@ TOKEN_URI = os.environ.get("TOKEN_URI")
 CALENDAR_ID = os.environ.get("CALENDAR_ID")
 
 
-with open('credentials.json', 'w') as file:
+with open('/tmp/credentials.json', 'w') as file:
     file.write('{"private_key": "'+PRIVATE_KEY+'",\n "client_email": "'+CLIENT_EMAIL+'",\n "token_uri": "'+TOKEN_URI+'"\n }')
