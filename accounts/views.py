@@ -10,9 +10,6 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from django.shortcuts import render
 
-
-
-
 class RegisterView(TemplateView):
     template_name = "signup.html"
 
@@ -68,8 +65,13 @@ class BlogListView(CreateView, ListView):
 
     def post(self, request):
         is_draft = True if request.POST.get("is_draft")=='True' else False
-        blog_instance = Blog.objects.create(title=request.POST.get("title"), image=request.FILES.get("image"), category=request.POST.get("category"), summary=request.POST.get("summary"), content=request.POST.get("content"), is_draft = is_draft, created_by=request.user)
-        # return HttpResponseRedirect('/blogs')
+        blog_instance = Blog.objects.create(title=request.POST.get("title"), 
+                                            image=request.FILES.get("image"), 
+                                            category=request.POST.get("category"), 
+                                            summary=request.POST.get("summary"), 
+                                            content=request.POST.get("content"), 
+                                            is_draft = is_draft, 
+                                            created_by=request.user)
         return HttpResponseRedirect(reverse('blogs'))
     
 
@@ -111,18 +113,15 @@ class AppointmentDetailsView(DetailView):
 
  
     def post(self, request, pk):
-        # Retrieve the form data
         speciality = request.POST.get('speciality')
         date_of_appointment = request.POST.get('date_of_appointment')
         starting_time = request.POST.get('starting_time')
 
-        # Calculate the end time of the appointment
         start_datetime = datetime.datetime.strptime(date_of_appointment + starting_time, '%Y-%m-%d%H:%M')
         end_datetime = start_datetime + datetime.timedelta(minutes=45)
         end_time = end_datetime.strftime('%I:%M %p')
 
-        # Create the calendar event
-        service_account_file = 'credentials.json'
+        service_account_file = '/tmp/credentials.json'
         scopes = ['https://www.googleapis.com/auth/calendar']
         credentials = service_account.Credentials.from_service_account_file(service_account_file, scopes=scopes)
         service = build('calendar', 'v3', credentials=credentials)
@@ -148,7 +147,7 @@ class AppointmentDetailsView(DetailView):
 
         user_instance = User.objects.get(pk=pk)
         appointment_details = {
-            'doctor_name': user_instance.get_full_name(),  # Replace with the actual doctor's name
+            'doctor_name': user_instance.get_full_name(),
             'appointment_date': date_of_appointment,
             'start_time': starting_time,
             'end_time': end_time,
